@@ -39,7 +39,7 @@ export function Details() {
         style={{
           display: "flex",
           flexDirection: "column",
-          height: "calc(100vh - 300px)",
+          height: "calc(100vh - 315px)",
           overflowY: "auto",
           paddingBottom: 30,
         }}
@@ -183,12 +183,11 @@ export function Details() {
           gap: 10,
         }}
       >
-        <Button onclick={() => navigate("/")}>
-          {"ir para inicio".toUpperCase()}
-        </Button>
-
         <Button variant="link" color="danger">
           {"cancelar agendamento".toUpperCase()}
+        </Button>
+        <Button onclick={() => navigate("/")}>
+          {"ir para inicio".toUpperCase()}
         </Button>
       </div>
     </div>

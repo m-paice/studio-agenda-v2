@@ -124,7 +124,7 @@ export function DateTime() {
             gridTemplateRows: `repeat(${times.length / 3}, 1fr)`,
             gap: 10,
             overflowY: "auto",
-            height: `calc(100vh - 420px)`,
+            height: `calc(100vh - 480px)`,
           }}
         >
           {times.map((time) => (

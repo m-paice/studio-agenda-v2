@@ -1,6 +1,28 @@
 import { useNavigate } from "react-router-dom";
 
 import { Button } from "../components/Button";
+import { Avatar } from "../components/Avatar";
+
+const services = [
+  {
+    id: 1,
+    name: "Corte Social",
+    price: 12.0,
+    image: "/geovan_gomes/corte_social.jpeg",
+  },
+  {
+    id: 2,
+    name: "Barba",
+    price: 8.0,
+    image: "/geovan_gomes/barba.webp",
+  },
+  {
+    id: 3,
+    name: "Sobrançelha",
+    price: 20.0,
+    image: "/geovan_gomes/sobrancelha.jpeg",
+  },
+];
 
 export function Confirmation() {
   const navigate = useNavigate();
@@ -9,12 +31,17 @@ export function Confirmation() {
     <div
       style={{
         display: "grid",
-        gridTemplateRows: "auto 50px",
+        gridTemplateRows: "auto 100px",
         height: "100%",
         padding: 10,
       }}
     >
-      <div>
+      <div
+        style={{
+          height: "calc(100vh - 270px)",
+          overflowY: "auto",
+        }}
+      >
         <p
           style={{
             textAlign: "center",
@@ -87,27 +114,63 @@ export function Confirmation() {
 
         <div
           style={{
-            marginTop: 20,
             display: "flex",
+            flexDirection: "column",
             justifyContent: "space-between",
-            alignItems: "flex-end",
-            paddingLeft: 20,
+            marginTop: 20,
           }}
         >
-          <ul>
-            <li>Corte social</li>
-            <li>Corte social</li>
-            <li>Corte social</li>
-            <li>Corte social</li>
-          </ul>
-          <h5
+          <ul
             style={{
-              color: "#1EAFB3",
-              fontSize: 30,
+              listStyle: "none",
             }}
           >
-            R$ 30,00
-          </h5>
+            {services.map((service) => (
+              <li
+                key={service.id}
+                style={{
+                  boxShadow: "0 0 5px rgba(0, 0, 0, 0.1)",
+                  padding: "3px 5px",
+                  borderRadius: 5,
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    gap: 10,
+                    alignItems: "center",
+                  }}
+                >
+                  <Avatar url={service.image} size="tiny" />
+                  <p>{service.name}</p>
+                </div>
+                <p>
+                  {service.price.toLocaleString("pt-BR", {
+                    style: "currency",
+                    currency: "BRL",
+                  })}
+                </p>
+              </li>
+            ))}
+          </ul>
+          <h3
+            style={{
+              fontSize: 25,
+              fontWeight: "bold",
+              textAlign: "right",
+            }}
+          >
+            Total{" "}
+            {services
+              .reduce((acc, service) => acc + service.price, 0)
+              .toLocaleString("pt-BR", {
+                style: "currency",
+                currency: "BRL",
+              })}
+          </h3>
         </div>
       </div>
 
