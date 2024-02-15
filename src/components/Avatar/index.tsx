@@ -1,10 +1,11 @@
 interface Props {
-  size?: "small" | "medium" | "large";
+  size?: "tiny" | "small" | "medium" | "large";
   url?: string;
 }
 
 export function Avatar({ url, size = "medium" }: Props) {
   const sizes = {
+    tiny: 30,
     small: 50,
     medium: 100,
     large: 150,
