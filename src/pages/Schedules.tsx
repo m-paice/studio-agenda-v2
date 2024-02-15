@@ -60,22 +60,27 @@ export function Schedules() {
     <div
       style={{
         display: "grid",
-        gridTemplateRows: "auto 100px",
+        gridTemplateRows: "50px auto",
         height: "100%",
         padding: 10,
       }}
     >
-      <div>
-        <p
-          style={{
-            textAlign: "center",
-            fontSize: 16,
-            color: "gray",
-            marginBottom: 10,
-          }}
-        >
-          Selecione o agendamento desejado
-        </p>
+      <p
+        style={{
+          textAlign: "center",
+          fontSize: 16,
+          color: "gray",
+          marginBottom: 10,
+        }}
+      >
+        Selecione o agendamento desejado
+      </p>
+      <div
+        style={{
+          overflowY: "auto",
+          height: "calc(100vh - 270px)",
+        }}
+      >
         {schedules.map((schedule, index) => (
           <div
             onClick={() => navigate(`/details`)}

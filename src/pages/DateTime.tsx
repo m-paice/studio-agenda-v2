@@ -2,12 +2,17 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { Button } from "../components/Button";
+import { useAccountContext } from "../context/account";
 
 const dates = [
   {
-    day: "13",
-    weekDay: "TER",
+    day: "19",
+    weekDay: "SEG",
   },
+  // {
+  //   day: "13",
+  //   weekDay: "TER",
+  // },
   {
     day: "14",
     weekDay: "QUA",
@@ -28,19 +33,16 @@ const dates = [
   //   day: "18",
   //   weekDay: "DOM",
   // },
-  // {
-  //   day: "19",
-  //   weekDay: "SEG",
-  // },
 ];
 
-const times = Array.from({ length: 16 }, (_, index) => {
-  const hour = index + 1;
+const times = Array.from({ length: 25 }, (_, index) => {
+  const hour = index < 10 ? `0${index}` : index.toString();
   return `${hour}:00`;
 });
 
 export function DateTime() {
   const navigate = useNavigate();
+  const { colors } = useAccountContext();
 
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
@@ -90,7 +92,7 @@ export function DateTime() {
                 borderRadius: 20,
                 transition: "0.3s",
                 backgroundColor:
-                  selectedDate === date.day ? "#1EAFB3" : "white",
+                  selectedDate === date.day ? colors.primary : "white",
                 color: selectedDate === date.day ? "white" : "black",
               }}
               onClick={() => setSelectedDate(date.day)}
@@ -122,17 +124,21 @@ export function DateTime() {
             gridTemplateRows: `repeat(${times.length / 3}, 1fr)`,
             gap: 10,
             overflowY: "auto",
-            height: `calc(100vh - 450px)`,
+            height: `calc(100vh - 420px)`,
           }}
         >
           {times.map((time) => (
             <div
               key={time}
               style={{
-                border: selectedTime === time ? "none" : "1px solid #1EAFB3",
-                backgroundColor: selectedTime === time ? "#1EAFB3" : "white",
+                border:
+                  selectedTime === time
+                    ? "none"
+                    : `1px solid ${colors.primary}`,
+                backgroundColor:
+                  selectedTime === time ? colors.primary : "white",
                 borderRadius: 10,
-                color: selectedTime === time ? "white" : "#1EAFB3",
+                color: selectedTime === time ? "white" : colors.primary,
                 textAlign: "center",
                 padding: 10,
                 transition: "0.3s",

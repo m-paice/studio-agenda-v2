@@ -1,11 +1,14 @@
 import { Outlet } from "react-router-dom";
+import { useAccountContext } from "../context/account";
 
 export function Layout() {
+  const { colors, name, type } = useAccountContext();
+
   return (
     <div>
       <div
         style={{
-          backgroundColor: "#171212",
+          backgroundColor: colors.background,
           padding: "10px",
           display: "flex",
           flexDirection: "column",
@@ -17,19 +20,20 @@ export function Layout() {
       >
         <h1
           style={{
-            color: "#fff",
+            color: colors.title,
+            textAlign: "center",
           }}
         >
-          {"Geovan Gomes".toUpperCase()}
+          {name.toUpperCase()}
         </h1>
         <h2
           style={{
-            color: "#1EAFB3",
+            color: colors.primary,
             letterSpacing: "4px",
             fontSize: "20px",
           }}
         >
-          {"Barbeiro".toUpperCase()}
+          {type.toUpperCase()}
         </h2>
       </div>
       <div
@@ -38,7 +42,7 @@ export function Layout() {
           maxWidth: "500px",
           backgroundColor: "#fff",
 
-          height: "calc(100vh - 160px)",
+          height: "calc(100vh - 200px)",
           boxShadow: "0 0 10px rgba(0, 0, 0, 0.2)",
           borderRadius: "10px",
         }}

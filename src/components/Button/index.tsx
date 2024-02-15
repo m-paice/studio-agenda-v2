@@ -1,4 +1,5 @@
 import React from "react";
+import { useAccountContext } from "../../context/account";
 
 interface Props {
   children: React.ReactNode;
@@ -13,10 +14,7 @@ export function Button({
   color = "primary",
   onclick,
 }: Props) {
-  const colors = {
-    primary: "#1EAFB3",
-    danger: "#E5195E",
-  };
+  const { colors } = useAccountContext();
 
   return (
     <button
@@ -24,12 +22,17 @@ export function Button({
       style={{
         height: 48,
         padding: 10,
-        backgroundColor: variant === "button" ? colors[color] : "transparent",
-        color: variant === "button" ? "white" : colors[color],
+        backgroundColor: variant === "button" ? colors.primary : "transparent",
+        color:
+          color === "danger"
+            ? colors.danger
+            : variant === "button"
+            ? "white"
+            : colors.primary,
         borderRadius: 12,
         cursor: "pointer",
         fontWeight: "bold",
-        border: variant === "outline" ? "2px solid #1EAFB3" : "none",
+        border: variant === "outline" ? `2px solid ${colors.primary}` : "none",
         textDecoration: variant === "link" ? "underline" : "none",
       }}
     >

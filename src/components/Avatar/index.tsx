@@ -1,8 +1,9 @@
 interface Props {
   size?: "small" | "medium" | "large";
+  url?: string;
 }
 
-export function Avatar({ size = "medium" }: Props) {
+export function Avatar({ url, size = "medium" }: Props) {
   const sizes = {
     small: 50,
     medium: 100,
@@ -17,6 +18,9 @@ export function Avatar({ size = "medium" }: Props) {
         backgroundColor: "#D9D9D9",
         borderRadius: "50%",
         marginBottom: 10,
+        backgroundImage: `url(${url})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
       }}
     />
   );

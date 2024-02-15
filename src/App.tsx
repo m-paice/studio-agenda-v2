@@ -1,5 +1,10 @@
+import { AccountProvider } from "./context/account";
 import { Routes } from "./routes";
 
 export function App() {
-  return <Routes />;
+  return (
+    <AccountProvider>
+      <Routes />;
+    </AccountProvider>
+  );
 }
