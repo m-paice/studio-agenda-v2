@@ -1,25 +1,15 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 
-import { Avatar } from "../components/Avatar";
-import { Button } from "../components/Button";
+import { Avatar } from "./Avatar";
 import { useAccountContext } from "../context/account";
 
 export function Services() {
-  const navigate = useNavigate();
   const { colors, services } = useAccountContext();
 
   const [selectedServices, setSelectedServices] = useState<number[]>([]);
 
   return (
-    <div
-      style={{
-        display: "grid",
-        gridTemplateRows: "auto 50px",
-        height: "100%",
-        padding: 10,
-      }}
-    >
+    <div>
       <div>
         <p
           style={{
@@ -36,8 +26,6 @@ export function Services() {
             display: "grid",
             gridTemplateColumns: "1fr 1fr",
             gap: 10,
-            overflowY: "auto",
-            height: "calc(100vh - 330px)",
           }}
         >
           {services.map((service, index) => (
@@ -82,10 +70,6 @@ export function Services() {
           ))}
         </div>
       </div>
-
-      <Button onclick={() => navigate("/datetime")}>
-        {"Avançar".toUpperCase()}
-      </Button>
     </div>
   );
 }

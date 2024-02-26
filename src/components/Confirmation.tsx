@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 
-import { Button } from "../components/Button";
-import { Avatar } from "../components/Avatar";
+import { Button } from "./Button";
+import { Avatar } from "./Avatar";
 
 const services = [
   {
@@ -28,20 +28,8 @@ export function Confirmation() {
   const navigate = useNavigate();
 
   return (
-    <div
-      style={{
-        display: "grid",
-        gridTemplateRows: "auto 100px",
-        height: "100%",
-        padding: 10,
-      }}
-    >
-      <div
-        style={{
-          height: "calc(100vh - 270px)",
-          overflowY: "auto",
-        }}
-      >
+    <div>
+      <div>
         <p
           style={{
             textAlign: "center",
@@ -68,7 +56,7 @@ export function Confirmation() {
               style={{
                 width: "100%",
                 padding: 10,
-                borderRadius: 12,
+                borderRadius: 5,
                 border: "none",
                 fontSize: 16,
                 marginBottom: 10,
@@ -85,7 +73,7 @@ export function Confirmation() {
               style={{
                 width: "100%",
                 padding: 10,
-                borderRadius: 12,
+                borderRadius: 5,
                 border: "none",
                 fontSize: 16,
                 marginBottom: 10,
@@ -106,9 +94,13 @@ export function Confirmation() {
               backgroundColor: "#F3F6F9",
               padding: 10,
               borderRadius: 12,
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
             }}
           >
-            <p>12 de março de 2021 - 10:00</p>
+            <p>12 de março (segunda-feira)</p>
+            <p>10:00</p>
           </div>
         </div>
 
@@ -161,6 +153,7 @@ export function Confirmation() {
               fontSize: 25,
               fontWeight: "bold",
               textAlign: "right",
+              margin: "20px 0",
             }}
           >
             Total{" "}
@@ -174,9 +167,11 @@ export function Confirmation() {
         </div>
       </div>
 
-      <Button onclick={() => navigate("/finished")}>
-        {"Agendar".toUpperCase()}
-      </Button>
+      <div>
+        <Button textSize="large" onclick={() => navigate("/finished")}>
+          {"Agendar".toUpperCase()}
+        </Button>
+      </div>
     </div>
   );
 }

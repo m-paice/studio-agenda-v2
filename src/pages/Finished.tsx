@@ -43,7 +43,7 @@ export function Finished() {
           gap: 10,
         }}
       >
-        <Button onclick={() => navigate("/services")}>
+        <Button onclick={() => navigate("/newSchedule")}>
           {"novo agendamento".toUpperCase()}
         </Button>
         <Button variant="outline" onclick={() => navigate("/details")}>

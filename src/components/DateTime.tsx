@@ -1,7 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 
-import { Button } from "../components/Button";
 import { useAccountContext } from "../context/account";
 
 const dates = [
@@ -9,10 +7,10 @@ const dates = [
     day: "19",
     weekDay: "SEG",
   },
-  // {
-  //   day: "13",
-  //   weekDay: "TER",
-  // },
+  {
+    day: "13",
+    weekDay: "TER",
+  },
   {
     day: "14",
     weekDay: "QUA",
@@ -29,10 +27,10 @@ const dates = [
     day: "17",
     weekDay: "SAB",
   },
-  // {
-  //   day: "18",
-  //   weekDay: "DOM",
-  // },
+  {
+    day: "18",
+    weekDay: "DOM",
+  },
 ];
 
 const times = Array.from({ length: 25 }, (_, index) => {
@@ -41,21 +39,13 @@ const times = Array.from({ length: 25 }, (_, index) => {
 });
 
 export function DateTime() {
-  const navigate = useNavigate();
   const { colors } = useAccountContext();
 
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
 
   return (
-    <div
-      style={{
-        display: "grid",
-        gridTemplateRows: "auto 50px",
-        height: "100%",
-        padding: 10,
-      }}
-    >
+    <div>
       <div>
         <p
           style={{
@@ -123,8 +113,6 @@ export function DateTime() {
             gridTemplateColumns: "repeat(3, 1fr)",
             gridTemplateRows: `repeat(${times.length / 3}, 1fr)`,
             gap: 10,
-            overflowY: "auto",
-            height: `calc(100vh - 480px)`,
           }}
         >
           {times.map((time) => (
@@ -152,10 +140,6 @@ export function DateTime() {
           ))}
         </div>
       </div>
-
-      <Button onclick={() => navigate("/confirmation")}>
-        {"Avançar".toUpperCase()}
-      </Button>
     </div>
   );
 }

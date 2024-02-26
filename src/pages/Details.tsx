@@ -30,7 +30,7 @@ export function Details() {
     <div
       style={{
         display: "grid",
-        gridTemplateRows: "auto 100px",
+        gridTemplateRows: "auto 40px",
         height: "100%",
         padding: 10,
       }}
@@ -39,7 +39,7 @@ export function Details() {
         style={{
           display: "flex",
           flexDirection: "column",
-          height: "calc(100vh - 315px)",
+          height: "calc(100vh - 260px)",
           overflowY: "auto",
           paddingBottom: 30,
         }}
@@ -77,7 +77,7 @@ export function Details() {
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            borderBottom: "1px solid #e0e0e0",
+
             marginBottom: 10,
           }}
         >
@@ -174,6 +174,10 @@ export function Details() {
           <li>2. Chegue 10 minutos antes do horário agendado.</li>
           <li>3. Você receberá um lemebrete pelo whatsapp 1h antes.</li>
         </ul>
+
+        <Button variant="link" color="danger">
+          {"cancelar agendamento".toUpperCase()}
+        </Button>
       </div>
 
       <div
@@ -183,9 +187,6 @@ export function Details() {
           gap: 10,
         }}
       >
-        <Button variant="link" color="danger">
-          {"cancelar agendamento".toUpperCase()}
-        </Button>
         <Button onclick={() => navigate("/")}>
           {"ir para inicio".toUpperCase()}
         </Button>

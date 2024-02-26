@@ -5,13 +5,21 @@ interface Props {
   children: React.ReactNode;
   variant?: "button" | "link" | "outline";
   color?: "primary" | "danger";
+  textSize?: "small" | "medium" | "large";
   onclick?: () => void;
 }
+
+const textSizes = {
+  small: 12,
+  medium: 16,
+  large: 20,
+};
 
 export function Button({
   children,
   variant = "button",
   color = "primary",
+  textSize = "medium",
   onclick,
 }: Props) {
   const { colors } = useAccountContext();
@@ -20,6 +28,7 @@ export function Button({
     <button
       onClick={onclick}
       style={{
+        width: "100%",
         height: 48,
         padding: 10,
         backgroundColor: variant === "button" ? colors.primary : "transparent",
@@ -32,6 +41,7 @@ export function Button({
         borderRadius: 12,
         cursor: "pointer",
         fontWeight: "bold",
+        fontSize: textSizes[textSize],
         border: variant === "outline" ? `2px solid ${colors.primary}` : "none",
         textDecoration: variant === "link" ? "underline" : "none",
       }}

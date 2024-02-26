@@ -25,7 +25,7 @@ export function Home() {
           gap: 10,
         }}
       >
-        <Button onclick={() => navigate("/services")}>
+        <Button onclick={() => navigate("/newSchedule")}>
           {"novo agendamento".toUpperCase()}
         </Button>
 
