@@ -1,8 +1,11 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { services } from "../mock/services";
 
+interface AccountContextType {
+  account: AccountContext;
+  setAccount: React.Dispatch<React.SetStateAction<AccountContext>>;
+}
 interface AccountContext {
-  id: number;
+  id: string;
   name: string;
   type: string;
   colors: {
@@ -20,81 +23,41 @@ interface AccountContext {
   }[];
 }
 
-const AccountContext = createContext<AccountContext>({} as AccountContext);
+const initialAccount: AccountContext = {
+  id: "",
+  name: "",
+  type: "",
+  colors: {
+    primary: "#46AAF2",
+    background: "#004A7F",
+    title: "#fff",
+    selected: "",
+    danger: "#E5195E",
+  },
+  services: [],
+};
 
-const accounts = [
-  {
-    id: 1,
-    name: "Geovan Gomes",
-    type: "Barbeiro",
-    colors: {
-      primary: "#1EAFB3",
-      background: "#171212",
-      title: "#fff",
-      selected: "#E8F7F7",
-      danger: "#E5195E",
-    },
-    services: services["geovan_gomes"],
-  },
-  {
-    id: 2,
-    name: "Studio Roane Rocha",
-    type: "Estética",
-    colors: {
-      primary: "#E51A5E",
-      background: "#FFD4E3",
-      title: "#E51A5E",
-      selected: "#FDF5F8",
-      danger: "#E5195E",
-    },
-
-    services: services["studio_roane_rocha"],
-  },
-  {
-    id: 3,
-    name: "Físio & Cia",
-    type: "Fisioterapia",
-    colors: {
-      primary: "#46AAF2",
-      background: "#004A7F",
-      title: "#fff",
-      selected: "#daeefc",
-      danger: "#E5195E",
-    },
-    services: services["fisio_e_cia"],
-  },
-];
+const AccountContext = createContext<AccountContextType | undefined>(undefined);
 
 export const AccountProvider = ({
   children,
 }: {
   children: React.ReactNode;
 }) => {
-  const [account, setAccount] = useState<AccountContext>({
-    id: 0,
-    name: "Meu Petrecho",
-    type: "Desenvolvedor",
-    colors: {
-      primary: "#46AAF2",
-      background: "#004A7F",
-      title: "#fff",
-      selected: "",
-      danger: "#E5195E",
-    },
-    services: [],
-  });
+  const [account, setAccount] = useState<AccountContext>(initialAccount);
 
-  useEffect(() => {
+  /*  useEffect(() => {
     setAccount(accounts[Math.floor(Math.random() * accounts.length)]);
   }, []);
-
+ */
   return (
-    <AccountContext.Provider value={account}>
+    <AccountContext.Provider value={{ account, setAccount }}>
       {children}
     </AccountContext.Provider>
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAccountContext = () => {
   const context = useContext(AccountContext);
 

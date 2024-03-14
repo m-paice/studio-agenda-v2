@@ -1,4 +1,5 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { Button } from "../components/Button";
 
 const schedules = [
   {
@@ -46,6 +47,7 @@ const schedules = [
 ];
 
 export function Schedules() {
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
   const colors: {
@@ -113,6 +115,9 @@ export function Schedules() {
           </div>
         ))}
       </div>
+      <Button onclick={() => navigate(`/${id}`)}>
+        {"voltar".toUpperCase()}
+      </Button>
     </div>
   );
 }

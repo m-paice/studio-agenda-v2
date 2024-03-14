@@ -4,7 +4,7 @@ import { Routes } from "./routes";
 export function App() {
   return (
     <AccountProvider>
-      <Routes />;
+      <Routes />
     </AccountProvider>
   );
 }

@@ -1,61 +1,164 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, createContext, useContext } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import * as Yup from "yup";
+import { toast } from "react-toastify";
 
 import { Button } from "../components/Button";
 import { useAccountContext } from "../context/account";
+import { Account, DayNames, Fields, Schedules } from "../types/home";
+import {
+  endOfDay,
+  format,
+  getDay,
+  setHours,
+  setMinutes,
+  startOfDay,
+} from "date-fns";
+import { useFormik } from "formik";
+import { handleTimeSlots } from "../hooks/useTimeSlots";
+import { Hours } from "../components/Hours";
+import { transformTime } from "../hooks/useTransformTime";
+import { useRequestCreate } from "../hooks/useRequestCreate";
+import { useRequestFindMany } from "../hooks/useRequestFindMany";
+import { useRequestFindOne } from "../hooks/useRequestFindOne";
+import { Days } from "../components/Days";
 
-const dates = [
-  {
-    day: "19",
-    weekDay: "SEG",
-  },
-  // {
-  //   day: "13",
-  //   weekDay: "TER",
-  // },
-  {
-    day: "14",
-    weekDay: "QUA",
-  },
-  {
-    day: "15",
-    weekDay: "QUI",
-  },
-  {
-    day: "16",
-    weekDay: "SEX",
-  },
-  {
-    day: "17",
-    weekDay: "SAB",
-  },
-  // {
-  //   day: "18",
-  //   weekDay: "DOM",
-  // },
+const daysOfWeek: DayNames[] = [
+  "DOMINGO",
+  "SEGUNDA-FEIRA",
+  "TERÇA-FEIRA",
+  "QUARTA-FEIRA",
+  "QUINTA-FEIRA",
+  "SEXTA-FEIRA",
+  "SABADO",
 ];
 
-const times = Array.from({ length: 25 }, (_, index) => {
-  const hour = index < 10 ? `0${index}` : index.toString();
-  return `${hour}:00`;
-});
+interface DateTimeContextType {
+  selectedDateTime: Date | null;
+  setSelectedDateTime: (dateTime: Date) => void;
+}
 
 export function DateTime() {
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { colors } = useAccountContext();
+  //const { colors } = useAccountContext();
 
-  const [selectedDate, setSelectedDate] = useState("");
-  const [selectedTime, setSelectedTime] = useState("");
+  const validationSchema = Yup.object({
+    date: Yup.string().required("Selecione uma data"),
+    hour: Yup.string().required("Selecione um horário"),
+  });
+
+  const formik = useFormik<Fields>({
+    initialValues: {
+      date: new Date(),
+      hour: "",
+    },
+    validationSchema: validationSchema,
+    onSubmit: (values) => {
+      if (values.date && values.hour) {
+        const [hour, minute] = values.hour.split(":");
+        const scheduleAt = new Date(
+          format(
+            setMinutes(setHours(values.date, Number(hour)), Number(minute)),
+            "YYYY/MM/dd HH:mm:ss"
+          )
+        );
+
+        const payload = { scheduleAt };
+        execCreateDateTime(payload);
+        toast.success("Data e horário selecionado com sucesso");
+      } else {
+        // Trate o caso em que values.hour é undefined
+        console.error("A propriedade 'hour' está indefinida.");
+      }
+    },
+  });
+
+  const {
+    execute: execCreateDateTime,
+    //loading: loadingCreateDateTime,
+    response: responseCreateDateTime,
+  } = useRequestCreate({ path: `/public/account/${id}/datetime` });
+
+  const {
+    response: responseSchedules,
+    //loading: loadingSchedules,
+    //execute: execSchedules,
+  } = useRequestFindMany<Schedules>({
+    path: `/public/account/${id}/schedules`,
+    defaultQuery: {
+      where: {
+        scheduleAt: {
+          $between: [
+            startOfDay(formik.values.date),
+            endOfDay(formik.values.date),
+          ],
+        },
+      },
+    },
+  });
+
+  const {
+    execute: execAccount,
+    response: responseAccount,
+    //loading: loadingAccount,
+  } = useRequestFindOne<Account>({
+    path: "/public/account",
+    id: `${id}/info`,
+  });
+
+  useEffect(() => {
+    if (responseCreateDateTime) {
+      formik.resetForm();
+    }
+  }, [responseCreateDateTime]);
+
+  useEffect(() => {
+    execAccount();
+  }, []);
+
+  const daySelected = formik?.values?.date
+    ? getDay(formik.values.date)
+    : getDay(new Date());
+
+  const dayWeek: DayNames = daysOfWeek[daySelected];
+
+  const enableDay: { [key: string]: boolean } =
+    responseAccount?.config?.days || {};
+
+  const hours = responseAccount?.config?.weekHours?.[dayWeek] || [];
+
+  const schedulesWithUserName = (responseSchedules || []).map((item) => ({
+    time: format(new Date(item.scheduleAt), "HH:mm"),
+    cellPhone: item.user.cellPhone,
+    id: item.id,
+  }));
+
+  const slots = hours.map((item) => {
+    const [startAt, endAt] = item;
+
+    const startTime = transformTime({ time: startAt });
+    const endTime = transformTime({ time: endAt });
+
+    const schedulesHours = (responseSchedules || []).map((item) => ({
+      scheduleAt: format(new Date(item.scheduleAt), "HH:mm"),
+      averageTime: item.averageTime,
+    }));
+
+    const { timeSlots } = handleTimeSlots({
+      payload: schedulesHours,
+      startAt: startTime,
+      endAt: endTime,
+    });
+
+    return timeSlots;
+  });
+
+  const timeDataSlots =
+    Array.isArray(slots) && slots.length ? [...slots[0], ...slots[1]] : [];
 
   return (
-    <div
-      style={{
-        display: "grid",
-        gridTemplateRows: "auto 50px",
-        height: "100%",
-        padding: 10,
-      }}
-    >
+    <div>
       <div>
         <p
           style={{
@@ -79,83 +182,33 @@ export function DateTime() {
             padding: "10px 0",
           }}
         >
-          {dates.map((date) => (
-            <div
-              key={date.day}
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                cursor: "pointer",
-                border: "1px solid #ccc",
-                padding: "10px 15px",
-                borderRadius: 20,
-                transition: "0.3s",
-                backgroundColor:
-                  selectedDate === date.day ? colors.primary : "white",
-                color: selectedDate === date.day ? "white" : "black",
-              }}
-              onClick={() => setSelectedDate(date.day)}
-            >
-              <span
-                style={{
-                  fontSize: 16,
-                  fontWeight: "bold",
-                }}
-              >
-                {date.day}
-              </span>
-              <span
-                style={{
-                  fontSize: 14,
-                  color: selectedDate === date.day ? "white" : "#8A96BC",
-                }}
-              >
-                {date.weekDay}
-              </span>
-            </div>
-          ))}
+          <Days
+            daysOfWeek={daysOfWeek}
+            enableDays={enableDay}
+            formik={formik}
+          />
         </div>
 
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(3, 1fr)",
-            gridTemplateRows: `repeat(${times.length / 3}, 1fr)`,
-            gap: 10,
-            overflowY: "auto",
-            height: `calc(100vh - 480px)`,
-          }}
-        >
-          {times.map((time) => (
-            <div
-              key={time}
-              style={{
-                border:
-                  selectedTime === time
-                    ? "none"
-                    : `1px solid ${colors.primary}`,
-                backgroundColor:
-                  selectedTime === time ? colors.primary : "white",
-                borderRadius: 10,
-                color: selectedTime === time ? "white" : colors.primary,
-                textAlign: "center",
-                padding: 10,
-                transition: "0.3s",
-                cursor: "pointer",
-                height: 50,
-              }}
-              onClick={() => setSelectedTime(time)}
-            >
-              {time}
-            </div>
-          ))}
-        </div>
+        <Hours
+          items={timeDataSlots}
+          value={formik?.values.hour}
+          onSelect={(item) => formik?.setFieldValue("hour", item)}
+          schedulesWithUserName={schedulesWithUserName}
+          daySelected={formik?.values.date}
+        />
       </div>
 
-      <Button onclick={() => navigate("/confirmation")}>
-        {"Avançar".toUpperCase()}
-      </Button>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          paddingTop: "50px",
+        }}
+      >
+        <Button onclick={() => navigate(`/public/account/${id}/confirmation`)}>
+          {"Avançar".toUpperCase()}
+        </Button>
+      </div>
     </div>
   );
 }

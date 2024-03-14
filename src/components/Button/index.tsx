@@ -22,17 +22,17 @@ export function Button({
       style={{
         height: 48,
         padding: 10,
-        backgroundColor: variant === "button" ? colors.primary : "transparent",
+        backgroundColor: variant === "button" ? "#46AAF2" : "transparent",
         color:
           color === "danger"
             ? colors.danger
             : variant === "button"
             ? "white"
-            : colors.primary,
+            : "#46AAF2",
         borderRadius: 12,
         cursor: "pointer",
         fontWeight: "bold",
-        border: variant === "outline" ? `2px solid ${colors.primary}` : "none",
+        border: variant === "outline" ? `2px solid ${"#46AAF2"}` : "none",
         textDecoration: variant === "link" ? "underline" : "none",
       }}
     >

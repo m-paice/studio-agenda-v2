@@ -1,14 +1,32 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useParams } from "react-router-dom";
 import { useAccountContext } from "../context/account";
+import { useRequestFindOne } from "../hooks/useRequestFindOne";
+import { Account } from "../types/home";
+import { useEffect } from "react";
 
 export function Layout() {
   const { colors, name, type } = useAccountContext();
+
+  const params = useParams<{ id: string }>();
+
+  const {
+    execute: exeAccount,
+    response: responseAccount,
+    //loading: loadingAccount,
+  } = useRequestFindOne<Account>({
+    path: "/public/account",
+    id: `${params.id}/info`,
+  });
+
+  useEffect(() => {
+    exeAccount();
+  }, []);
 
   return (
     <div>
       <div
         style={{
-          backgroundColor: colors.background,
+          backgroundColor: "#004A7F",
           padding: "10px",
           display: "flex",
           flexDirection: "column",
@@ -20,20 +38,22 @@ export function Layout() {
       >
         <h1
           style={{
-            color: colors.title,
+            color: "#fff",
             textAlign: "center",
           }}
         >
-          {name.toUpperCase()}
+          {/* {name.toUpperCase()} */}
+          {responseAccount?.name || "Nome da conta"}
         </h1>
         <h2
           style={{
-            color: colors.primary,
+            color: "#46AAF2",
             letterSpacing: "4px",
             fontSize: "20px",
           }}
         >
-          {type.toUpperCase()}
+          {/* {type.toUpperCase()} */}
+          {responseAccount?.type || "Colocar Tipo prestador"}
         </h2>
       </div>
       <div
