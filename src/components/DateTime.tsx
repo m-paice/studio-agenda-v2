@@ -1,45 +1,20 @@
 import { useState } from "react";
 
 import { useAccountContext } from "../context/account";
-
-const dates = [
-  {
-    day: "19",
-    weekDay: "SEG",
-  },
-  {
-    day: "13",
-    weekDay: "TER",
-  },
-  {
-    day: "14",
-    weekDay: "QUA",
-  },
-  {
-    day: "15",
-    weekDay: "QUI",
-  },
-  {
-    day: "16",
-    weekDay: "SEX",
-  },
-  {
-    day: "17",
-    weekDay: "SAB",
-  },
-  {
-    day: "18",
-    weekDay: "DOM",
-  },
-];
+import dayjs from "dayjs";
 
 const times = Array.from({ length: 25 }, (_, index) => {
   const hour = index < 10 ? `0${index}` : index.toString();
   return `${hour}:00`;
 });
 
+const currentDayOfWeek = dayjs().day();
+
 export function DateTime() {
-  const { colors } = useAccountContext();
+  const { account } = useAccountContext();
+  const { colors, days } = account;
+
+  console.log("days", days);
 
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
@@ -55,7 +30,7 @@ export function DateTime() {
             marginBottom: 10,
           }}
         >
-          Selecione a data e horario
+          Selecione a data e horario {currentDayOfWeek}
         </p>
 
         <div
@@ -69,42 +44,56 @@ export function DateTime() {
             padding: "10px 0",
           }}
         >
-          {dates.map((date) => (
-            <div
-              key={date.day}
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                cursor: "pointer",
-                border: "1px solid #ccc",
-                padding: "10px 15px",
-                borderRadius: 20,
-                transition: "0.3s",
-                backgroundColor:
-                  selectedDate === date.day ? colors.primary : "white",
-                color: selectedDate === date.day ? "white" : "black",
-              }}
-              onClick={() => setSelectedDate(date.day)}
-            >
-              <span
+          {Array.from({ length: 7 }).map((date, index) => {
+            const dayShortName = dayjs()
+              .add(currentDayOfWeek - 1 + index, "day")
+              .format("ddd");
+
+            const dayShortNameFormated = dayShortName
+              .normalize("NFD")
+              .replace(/[\u0300-\u036f]/g, "");
+            return (
+              <div
+                key={index}
                 style={{
-                  fontSize: 16,
-                  fontWeight: "bold",
+                  display: !days[dayShortNameFormated] ? "none" : "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  cursor: "pointer",
+                  border: "1px solid #ccc",
+                  padding: "10px 15px",
+                  borderRadius: 20,
+                  transition: "0.3s",
+                  backgroundColor:
+                    selectedDate === index.toString()
+                      ? colors.primary
+                      : "white",
+                  color: selectedDate === index.toString() ? "white" : "black",
                 }}
+                onClick={() => setSelectedDate(index.toString())}
               >
-                {date.day}
-              </span>
-              <span
-                style={{
-                  fontSize: 14,
-                  color: selectedDate === date.day ? "white" : "#8A96BC",
-                }}
-              >
-                {date.weekDay}
-              </span>
-            </div>
-          ))}
+                <span
+                  style={{
+                    fontSize: 16,
+                    fontWeight: "bold",
+                  }}
+                >
+                  {dayjs().add(index, "day").format("DD")}
+                </span>
+                <span
+                  style={{
+                    fontSize: 14,
+                    color:
+                      selectedDate === index.toString() ? "white" : "#8A96BC",
+                  }}
+                >
+                  {dayjs()
+                    .add(currentDayOfWeek - 1 + index, "day")
+                    .format("ddd")}
+                </span>
+              </div>
+            );
+          })}
         </div>
 
         <div

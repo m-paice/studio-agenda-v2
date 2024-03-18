@@ -1,8 +1,17 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "../components/Button";
+import { useAccountContext } from "../context/account";
+import { useEffect } from "react";
 
 export function Home() {
+  const { id } = useParams();
   const navigate = useNavigate();
+
+  const { handleSetAccountId } = useAccountContext();
+
+  useEffect(() => {
+    handleSetAccountId(id!);
+  }, []);
 
   return (
     <div

@@ -4,7 +4,8 @@ import { Avatar } from "./Avatar";
 import { useAccountContext } from "../context/account";
 
 export function Services() {
-  const { colors, services } = useAccountContext();
+  const { account } = useAccountContext();
+  const { colors, services } = account;
 
   const [selectedServices, setSelectedServices] = useState<number[]>([]);
 

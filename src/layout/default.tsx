@@ -1,8 +1,19 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { useAccountContext } from "../context/account";
+import { useEffect } from "react";
 
 export function Layout() {
-  const { colors, name, type } = useAccountContext();
+  const navigate = useNavigate();
+  const { account, isLogged } = useAccountContext();
+  const { colors, name, type } = account;
+
+  const hasAccountCached = localStorage.getItem("account");
+
+  useEffect(() => {
+    if (!isLogged) {
+      navigate(`/${hasAccountCached}`);
+    }
+  }, [isLogged]);
 
   return (
     <div>

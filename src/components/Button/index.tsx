@@ -22,7 +22,8 @@ export function Button({
   textSize = "medium",
   onclick,
 }: Props) {
-  const { colors } = useAccountContext();
+  const { account } = useAccountContext();
+  const { colors } = account;
 
   return (
     <button
