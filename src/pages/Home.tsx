@@ -44,6 +44,7 @@ export function Home() {
         style={{
           objectFit: "cover",
           borderRadius: 10,
+          maxHeight: 450,
         }}
       />
 

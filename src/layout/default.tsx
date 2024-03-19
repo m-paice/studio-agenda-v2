@@ -42,7 +42,9 @@ export function Layout() {
             textAlign: "center",
           }}
         >
-          {responseAccount?.name.toUpperCase() || "Nome da conta"}
+          {responseAccount?.id
+            ? (accounts[responseAccount.id] || "").toUpperCase()
+            : ""}
         </h1>
         <h2
           style={{
@@ -51,9 +53,7 @@ export function Layout() {
             fontSize: "20px",
           }}
         >
-          {responseAccount?.id
-            ? (accounts[responseAccount.id] || "agendamentos").toUpperCase()
-            : "Colocar Tipo prestador"}
+          {responseAccount?.name.toUpperCase() || ""}
         </h2>
       </div>
       <div
