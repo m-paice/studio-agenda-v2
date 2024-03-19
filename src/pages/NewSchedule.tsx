@@ -29,8 +29,8 @@ const initialValues = {
   services: [],
   date: new Date(),
   time: "",
-  name: "Matheus Paice",
-  cellPhone: "14998022422",
+  name: "",
+  cellPhone: "",
 };
 
 const validationSchema = Yup.object({
