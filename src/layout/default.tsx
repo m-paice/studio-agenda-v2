@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Outlet, useParams } from "react-router-dom";
 import { useRequestFindOne } from "../hooks/useRequestFindOne";
 import { Account } from "../types/home";
+import { useAccountContext } from "../context/account";
 
 const accounts: { [key: string]: string } = {
   "85b71750-b509-4e2a-8727-0a79df94ab83": "barbeiro",
@@ -9,6 +10,8 @@ const accounts: { [key: string]: string } = {
 
 export function Layout() {
   const params = useParams<{ accountId: string }>();
+  const { account } = useAccountContext();
+  const { colors } = account;
 
   const { execute: exeAccount, response: responseAccount } =
     useRequestFindOne<Account>({
@@ -23,7 +26,7 @@ export function Layout() {
     <div>
       <div
         style={{
-          backgroundColor: "#004A7F",
+          backgroundColor: colors.background,
           padding: "10px",
           display: "flex",
           flexDirection: "column",
@@ -43,13 +46,13 @@ export function Layout() {
         </h1>
         <h2
           style={{
-            color: "#46AAF2",
+            color: colors.primary,
             letterSpacing: "4px",
             fontSize: "20px",
           }}
         >
           {responseAccount?.id
-            ? accounts[responseAccount.id].toUpperCase()
+            ? (accounts[responseAccount.id] || "agendamentos").toUpperCase()
             : "Colocar Tipo prestador"}
         </h2>
       </div>

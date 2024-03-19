@@ -26,10 +26,10 @@ const initialAccount: AccountContext = {
   weekHours: {},
   days: {},
   colors: {
-    primary: "#46AAF2",
-    background: "#004A7F",
+    primary: "#1EAFB3",
+    background: "#171212",
     title: "#fff",
-    selected: "",
+    selected: "#E8F7F7",
     danger: "#E5195E",
   },
 };

@@ -40,7 +40,7 @@ export function Button({
         backgroundColor: disabled
           ? "lightgray"
           : variant === "button"
-          ? "#46AAF2"
+          ? colors.primary
           : "transparent",
         color: disabled
           ? "gray"
@@ -48,11 +48,11 @@ export function Button({
           ? colors.danger
           : variant === "button"
           ? "white"
-          : "#46AAF2",
+          : colors.primary,
         borderRadius: 12,
         cursor: "pointer",
         fontWeight: "bold",
-        border: variant === "outline" ? `2px solid ${"#46AAF2"}` : "none",
+        border: variant === "outline" ? `2px solid ${colors.primary}` : "none",
         textDecoration: variant === "link" ? "underline" : "none",
         fontSize: sizes[size],
       }}
