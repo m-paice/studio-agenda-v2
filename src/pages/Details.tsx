@@ -1,30 +1,88 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "../components/Button";
 import { Avatar } from "../components/Avatar";
+import { useRequestFindOne } from "../hooks/useRequestFindOne";
+import { useEffect } from "react";
+import dayjs from "dayjs";
+import { SkeletonDetails } from "../components/Skeleton/Details";
+import { useRequestDestroy } from "../hooks/useRequestDestroy";
+import { Modal } from "../components/Modal";
+import { useToggle } from "../hooks/useToggle";
 
-const services = [
-  {
-    id: 1,
-    name: "Corte Social",
-    price: 12.0,
-    image: "/geovan_gomes/corte_social.jpeg",
-  },
-  {
-    id: 2,
-    name: "Barba",
-    price: 8.0,
-    image: "/geovan_gomes/barba.webp",
-  },
-  {
-    id: 3,
-    name: "Sobrançelha",
-    price: 20.0,
-    image: "/geovan_gomes/sobrancelha.jpeg",
-  },
-];
+interface Schedule {
+  id: string;
+  scheduleAt: Date;
+  status: string;
+  services: {
+    id: string;
+    name: string;
+    price: number;
+    image?: string;
+  }[];
+  user: {
+    name: string;
+    cellPhone: string;
+  };
+}
+
+const colors: {
+  [key: string]: string;
+} = {
+  finished: "#18C07A",
+  canceled: "#E51A5E",
+  pending: "#FFC107",
+};
+
+const status: {
+  [key: string]: string;
+} = {
+  finished: "Finalizado",
+  canceled: "Cancelado",
+  pending: "Pendente",
+};
 
 export function Details() {
   const navigate = useNavigate();
+  const { accountId, scheduleId } = useParams<{
+    accountId: string;
+    scheduleId: string;
+  }>();
+
+  const { onChangeToggle, toggle } = useToggle();
+
+  const {
+    execute: exeSchedule,
+    response: responseSchedule,
+    loading,
+  } = useRequestFindOne<Schedule>({
+    path: `/public/schedule/details/${scheduleId}`,
+  });
+
+  const { execute: destroy, loading: loadingDestroy } = useRequestDestroy({
+    path: `/public/schedule/cancel/${scheduleId}`,
+    callbackSuccess: () => {
+      navigate(`/${accountId}`);
+    },
+  });
+
+  useEffect(() => {
+    if (scheduleId) {
+      exeSchedule();
+    }
+  }, [scheduleId]);
+
+  const handleCancel = () => {
+    destroy();
+    onChangeToggle();
+  };
+
+  if (loading) {
+    return <SkeletonDetails />;
+  }
+
+  if (!responseSchedule) {
+    return <h1>Agendamento não encontrado</h1>;
+  }
 
   return (
     <div
@@ -41,6 +99,7 @@ export function Details() {
           flexDirection: "column",
           height: "calc(100vh - 315px)",
           overflowY: "auto",
+          paddingRight: 10,
           paddingBottom: 30,
         }}
       >
@@ -60,7 +119,9 @@ export function Details() {
               fontWeight: "bold",
             }}
           >
-            14 fevereiro, <br /> sexta-feira
+            {/* 14 fevereiro, <br /> sexta-feira */}
+            {dayjs(responseSchedule.scheduleAt).format("DD MMMM")}, <br />
+            {dayjs(responseSchedule.scheduleAt).format("dddd")}
           </h3>
           <h3
             style={{
@@ -68,7 +129,7 @@ export function Details() {
               fontWeight: "bold",
             }}
           >
-            16:00
+            {dayjs(responseSchedule.scheduleAt).format("HH:mm")}
           </h3>
         </div>
 
@@ -77,8 +138,8 @@ export function Details() {
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            borderBottom: "1px solid #e0e0e0",
-            marginBottom: 10,
+            // borderBottom: "1px solid #e0e0e0",
+            marginBottom: 40,
           }}
         >
           <div>
@@ -87,11 +148,22 @@ export function Details() {
                 fontWeight: "bold",
               }}
             >
-              Matheus Paice
+              {responseSchedule.user.name}
             </p>
-            <span>14 99802-2422</span>
+            <span>
+              {responseSchedule.user.cellPhone.replace(
+                /(\d{2})(\d{5})(\d{4})/,
+                "($1) $2-$3"
+              )}
+            </span>
           </div>
-          <h4>Pendente</h4>
+          <h4
+            style={{
+              color: colors[responseSchedule.status] || "black",
+            }}
+          >
+            {status[responseSchedule.status]}
+          </h4>
         </div>
 
         <div
@@ -106,12 +178,12 @@ export function Details() {
               listStyle: "none",
             }}
           >
-            {services.map((service) => (
+            {responseSchedule.services.map((service, index) => (
               <li
-                key={service.id}
+                key={index}
                 style={{
-                  boxShadow: "0 0 5px rgba(0, 0, 0, 0.1)",
-                  padding: "3px 5px",
+                  borderBottom: "1px solid #e0e0e0",
+                  padding: "10px 0",
                   borderRadius: 5,
                   display: "flex",
                   justifyContent: "space-between",
@@ -125,7 +197,7 @@ export function Details() {
                     alignItems: "center",
                   }}
                 >
-                  <Avatar url={service.image} size="tiny" />
+                  <Avatar url={service.image || ""} size="tiny" />
                   <p>{service.name}</p>
                 </div>
                 <p>
@@ -145,7 +217,7 @@ export function Details() {
             }}
           >
             Total{" "}
-            {services
+            {responseSchedule.services
               .reduce((acc, service) => acc + service.price, 0)
               .toLocaleString("pt-BR", {
                 style: "currency",
@@ -183,13 +255,44 @@ export function Details() {
           gap: 10,
         }}
       >
-        <Button variant="link" color="danger">
-          {"cancelar agendamento".toUpperCase()}
-        </Button>
-        <Button onclick={() => navigate("/")}>
+        {responseSchedule.status === "pending" && (
+          <Button
+            disabled={loadingDestroy}
+            onclick={onChangeToggle}
+            variant="link"
+            color="danger"
+          >
+            {"cancelar agendamento".toUpperCase()}
+          </Button>
+        )}
+        <Button onclick={() => navigate(`/${accountId}`)}>
           {"ir para inicio".toUpperCase()}
         </Button>
       </div>
+
+      <Modal isOpen={toggle} title="Cancelamento">
+        <p>
+          Deseja cancelar esse agendamento? <br /> Seu horário será liberado
+          para outro cliente.
+        </p>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: 20,
+            marginTop: 20,
+          }}
+        >
+          <Button onclick={onChangeToggle}>{"não".toUpperCase()}</Button>
+          <Button
+            disabled={loadingDestroy}
+            variant="outline"
+            onclick={handleCancel}
+          >
+            {"sim".toUpperCase()}
+          </Button>
+        </div>
+      </Modal>
     </div>
   );
 }

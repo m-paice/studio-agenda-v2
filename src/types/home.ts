@@ -29,8 +29,9 @@ export interface Account {
 export interface Servicing {
   id: string;
   name: string;
-  price: string;
+  price: number;
   averageTime: string;
+  image?: string;
 }
 
 export interface Schedules {
@@ -46,6 +47,6 @@ export interface Fields {
   name?: string;
   cellPhone?: string;
   date?: Date;
-  services?: Services[];
+  services?: Servicing[];
   hour?: string;
 }

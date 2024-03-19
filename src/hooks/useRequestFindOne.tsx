@@ -3,11 +3,10 @@ import { getApi } from "../services/api";
 
 interface Props {
   path: string;
-  id: string;
   defaultQuery?: object;
 }
 
-export function useRequestFindOne<T>({ path, id, defaultQuery = {} }: Props) {
+export function useRequestFindOne<T>({ path, defaultQuery = {} }: Props) {
   const [response, setResponse] = useState<T | null>(null);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -16,7 +15,7 @@ export function useRequestFindOne<T>({ path, id, defaultQuery = {} }: Props) {
     setLoading(true);
 
     getApi()
-      .get(`${path}/${id}`, {
+      .get(path, {
         params: {
           ...defaultQuery,
           ...params,

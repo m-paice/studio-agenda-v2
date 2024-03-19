@@ -1,62 +1,59 @@
+import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Button } from "../components/Button";
+import dayjs from "dayjs";
 
-const schedules = [
-  {
-    id: 1,
-    date: "14 fevereiro às 16:00",
-    day: "sexta-feira",
-    status: "pendente",
-  },
-  {
-    id: 2,
-    date: "15 fevereiro às 16:00",
-    day: "sábado",
-    status: "confirmado",
-  },
-  {
-    id: 3,
-    date: "16 fevereiro às 16:00",
-    day: "domingo",
-    status: "confirmado",
-  },
-  {
-    id: 4,
-    date: "17 fevereiro às 16:00",
-    day: "segunda-feira",
-    status: "cancelado",
-  },
-  {
-    id: 5,
-    date: "18 fevereiro às 16:00",
-    day: "terça-feira",
-    status: "cancelado",
-  },
-  {
-    id: 6,
-    date: "19 fevereiro às 16:00",
-    day: "quarta-feira",
-    status: "confirmado",
-  },
-  {
-    id: 7,
-    date: "20 fevereiro às 16:00",
-    day: "quinta-feira",
-    status: "confirmado",
-  },
-];
+import { Button } from "../components/Button";
+import { useRequestFindMany } from "../hooks/useRequestFindMany";
+import { SkeletonSchedules } from "../components/Skeleton/Schedules";
+
+interface Schedules {
+  id: string;
+  scheduleAt: Date;
+  status: string;
+  createdAt: Date;
+}
+
+const colors: {
+  [key: string]: string;
+} = {
+  finished: "#18C07A",
+  canceled: "#E51A5E",
+  pending: "#FFC107",
+};
+
+const status: {
+  [key: string]: string;
+} = {
+  finished: "Finalizado",
+  canceled: "Cancelado",
+  pending: "Pendente",
+};
 
 export function Schedules() {
-  const { id } = useParams<{ id: string }>();
+  const { accountId } = useParams<{ accountId: string }>();
   const navigate = useNavigate();
 
-  const colors: {
-    [key: string]: string;
-  } = {
-    confirmado: "#18C07A",
-    cancelado: "#E51A5E",
-    pendente: "#FFC107",
-  };
+  const {
+    execute: execSchedules,
+    response: responseSchedules,
+    loading: loadingSchedules,
+  } = useRequestFindMany<Schedules>({
+    path: `/public/account/${accountId}/schedules`,
+    defaultQuery: {
+      where: {
+        userId: localStorage.getItem("userId"),
+      },
+      limit: 5,
+    },
+  });
+
+  useEffect(() => {
+    execSchedules();
+  }, []);
+
+  if (loadingSchedules) {
+    return <SkeletonSchedules />;
+  }
 
   return (
     <div
@@ -80,42 +77,54 @@ export function Schedules() {
       <div
         style={{
           overflowY: "auto",
-          height: "calc(100vh - 270px)",
+          height: "calc(100vh - 320px)",
         }}
       >
-        {schedules.map((schedule, index) => (
-          <div
-            onClick={() => navigate(`/details`)}
-            key={schedule.id}
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              backgroundColor: index % 2 === 0 ? "#F6F6F6" : "transparent",
-              padding: 10,
-              cursor: "pointer",
-            }}
-          >
-            <div>
-              <p>{schedule.date}</p>
-              <span
-                style={{
-                  color: "#876370",
-                }}
-              >
-                {schedule.day}
-              </span>
-            </div>
-            <span
+        {(responseSchedules || [])
+          .sort((a, b) => {
+            if (a.createdAt > b.createdAt) {
+              return -1;
+            }
+            if (a.createdAt < b.createdAt) {
+              return 1;
+            }
+            return 0;
+          })
+          .map((schedule, index) => (
+            <div
+              onClick={() => navigate(`/${accountId}/${schedule.id}/details`)}
+              key={schedule.id}
               style={{
-                color: colors[schedule.status],
+                display: "flex",
+                justifyContent: "space-between",
+                backgroundColor: index % 2 === 0 ? "#F6F6F6" : "transparent",
+                padding: 10,
+                cursor: "pointer",
               }}
             >
-              {schedule.status}
-            </span>
-          </div>
-        ))}
+              <div>
+                <p>
+                  {dayjs(schedule.scheduleAt).format("DD MMMM YYYY [às] HH:mm")}
+                </p>
+                <span
+                  style={{
+                    color: "#876370",
+                  }}
+                >
+                  {dayjs(schedule.scheduleAt).format("dddd")}
+                </span>
+              </div>
+              <span
+                style={{
+                  color: colors[schedule.status] || "black",
+                }}
+              >
+                {status[schedule.status] || schedule.status}
+              </span>
+            </div>
+          ))}
       </div>
-      <Button onclick={() => navigate(`/${id}`)}>
+      <Button onclick={() => navigate(`/${accountId}`)}>
         {"voltar".toUpperCase()}
       </Button>
     </div>

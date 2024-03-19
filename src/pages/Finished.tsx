@@ -1,9 +1,13 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { Button } from "../components/Button";
 
 export function Finished() {
   const navigate = useNavigate();
+  const { accountId, scheduleId } = useParams<{
+    accountId: string;
+    scheduleId: string;
+  }>();
 
   return (
     <div
@@ -43,10 +47,13 @@ export function Finished() {
           gap: 10,
         }}
       >
-        <Button onclick={() => navigate("/services")}>
+        <Button onclick={() => navigate(`/${accountId}/new`)}>
           {"novo agendamento".toUpperCase()}
         </Button>
-        <Button variant="outline" onclick={() => navigate("/details")}>
+        <Button
+          variant="outline"
+          onclick={() => navigate(`/${accountId}/${scheduleId}/details`)}
+        >
           {"ver detalhes".toUpperCase()}
         </Button>
       </div>

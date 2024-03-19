@@ -4,22 +4,23 @@ import { getApi } from "../services/api";
 
 interface Props {
   path: string;
+  callbackSuccess?: () => void;
 }
 
-export function useRequestCreate<T>({ path }: Props) {
-  const [response, setResponse] = useState<T | null>(null);
+export function useRequestDestroy({ path, callbackSuccess }: Props) {
+  const [response, setResponse] = useState<boolean | null>(null);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const execute = (payload: unknown, params = {}) => {
+  const execute = () => {
     setLoading(true);
+    setError(false);
 
     getApi()
-      .post(path, payload, {
-        params,
-      })
-      .then(({ data }) => {
-        setResponse(data);
+      .delete(path)
+      .then(() => {
+        if (callbackSuccess) callbackSuccess();
+        setResponse(true);
 
         setError(false);
         setLoading(false);

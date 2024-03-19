@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useMemo, useState } from "react";
 
 interface AccountContextType {
   account: AccountContext;
@@ -8,6 +8,8 @@ interface AccountContext {
   id: string;
   name: string;
   type: string;
+  weekHours: { [key: string]: string[][] };
+  days: { [key: string]: boolean };
   colors: {
     primary: string;
     background: string;
@@ -15,18 +17,14 @@ interface AccountContext {
     selected: string;
     danger: string;
   };
-  services: {
-    id: number;
-    name: string;
-    price: number;
-    image: string;
-  }[];
 }
 
 const initialAccount: AccountContext = {
   id: "",
   name: "",
   type: "",
+  weekHours: {},
+  days: {},
   colors: {
     primary: "#46AAF2",
     background: "#004A7F",
@@ -34,10 +32,11 @@ const initialAccount: AccountContext = {
     selected: "",
     danger: "#E5195E",
   },
-  services: [],
 };
 
-const AccountContext = createContext<AccountContextType | undefined>(undefined);
+const AccountContext = createContext<AccountContextType>(
+  {} as AccountContextType
+);
 
 export const AccountProvider = ({
   children,
@@ -46,14 +45,10 @@ export const AccountProvider = ({
 }) => {
   const [account, setAccount] = useState<AccountContext>(initialAccount);
 
-  /*  useEffect(() => {
-    setAccount(accounts[Math.floor(Math.random() * accounts.length)]);
-  }, []);
- */
+  const value = useMemo(() => ({ account, setAccount }), [account, setAccount]);
+
   return (
-    <AccountContext.Provider value={{ account, setAccount }}>
-      {children}
-    </AccountContext.Provider>
+    <AccountContext.Provider value={value}>{children}</AccountContext.Provider>
   );
 };
 

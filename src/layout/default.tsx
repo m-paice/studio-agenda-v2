@@ -1,22 +1,15 @@
+import { useEffect } from "react";
 import { Outlet, useParams } from "react-router-dom";
-import { useAccountContext } from "../context/account";
 import { useRequestFindOne } from "../hooks/useRequestFindOne";
 import { Account } from "../types/home";
-import { useEffect } from "react";
 
 export function Layout() {
-  const { colors, name, type } = useAccountContext();
+  const params = useParams<{ accountId: string }>();
 
-  const params = useParams<{ id: string }>();
-
-  const {
-    execute: exeAccount,
-    response: responseAccount,
-    //loading: loadingAccount,
-  } = useRequestFindOne<Account>({
-    path: "/public/account",
-    id: `${params.id}/info`,
-  });
+  const { execute: exeAccount, response: responseAccount } =
+    useRequestFindOne<Account>({
+      path: `/public/account/${params.accountId}/info`,
+    });
 
   useEffect(() => {
     exeAccount();
@@ -43,7 +36,7 @@ export function Layout() {
           }}
         >
           {/* {name.toUpperCase()} */}
-          {responseAccount?.name || "Nome da conta"}
+          {responseAccount?.name.toUpperCase() || "Nome da conta"}
         </h1>
         <h2
           style={{
@@ -53,7 +46,7 @@ export function Layout() {
           }}
         >
           {/* {type.toUpperCase()} */}
-          {responseAccount?.type || "Colocar Tipo prestador"}
+          {responseAccount?.type.toUpperCase() || "Colocar Tipo prestador"}
         </h2>
       </div>
       <div

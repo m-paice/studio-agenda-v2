@@ -18,7 +18,6 @@ export function Avatar({ url, size = "medium" }: Props) {
         height: sizes[size],
         backgroundColor: "#D9D9D9",
         borderRadius: "50%",
-        marginBottom: 10,
         backgroundImage: `url(${url})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
