@@ -37,7 +37,15 @@ export function Home() {
         <p>Escolha uma das opções abaixo para continuar</p>
       </div>
 
-      <div></div>
+      <img
+        src="./capa.jpeg"
+        alt="capa"
+        width="100%"
+        style={{
+          objectFit: "cover",
+          borderRadius: 10,
+        }}
+      />
 
       <div
         style={{

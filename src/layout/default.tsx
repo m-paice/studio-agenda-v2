@@ -3,6 +3,10 @@ import { Outlet, useParams } from "react-router-dom";
 import { useRequestFindOne } from "../hooks/useRequestFindOne";
 import { Account } from "../types/home";
 
+const accounts: { [key: string]: string } = {
+  "85b71750-b509-4e2a-8727-0a79df94ab83": "barbeiro",
+};
+
 export function Layout() {
   const params = useParams<{ accountId: string }>();
 
@@ -35,7 +39,6 @@ export function Layout() {
             textAlign: "center",
           }}
         >
-          {/* {name.toUpperCase()} */}
           {responseAccount?.name.toUpperCase() || "Nome da conta"}
         </h1>
         <h2
@@ -45,8 +48,9 @@ export function Layout() {
             fontSize: "20px",
           }}
         >
-          {/* {type.toUpperCase()} */}
-          {responseAccount?.type.toUpperCase() || "Colocar Tipo prestador"}
+          {responseAccount?.id
+            ? accounts[responseAccount.id].toUpperCase()
+            : "Colocar Tipo prestador"}
         </h2>
       </div>
       <div
