@@ -43,7 +43,7 @@ export function Layout() {
           }}
         >
           {responseAccount?.id
-            ? (accounts[responseAccount.id] || "").toUpperCase()
+            ? (accounts[responseAccount.id] || "agendamentos").toUpperCase()
             : ""}
         </h1>
         <h2

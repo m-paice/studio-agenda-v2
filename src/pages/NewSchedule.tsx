@@ -83,6 +83,7 @@ export function NewSchedule() {
     execute: execCreateSchedules,
     response: responseCreated,
     loading: loadingCreateSchedule,
+    error: errorCreated,
   } = useRequestCreate<{ id: string; userId: string }>({
     path: `/public/account/${accountId}/schedules`,
   });
@@ -118,6 +119,16 @@ export function NewSchedule() {
     useRequestFindOne<Account>({
       path: `/public/account/${accountId}/info`,
     });
+
+  useEffect(() => {
+    if (errorCreated) {
+      toast.error(
+        "Já existe um agendamento para esse horário. Por favor, selecione outro horário."
+      );
+      execSchedules();
+      setFieldValue("time", "");
+    }
+  }, [errorCreated]);
 
   useEffect(() => {
     if (responseCreated) {

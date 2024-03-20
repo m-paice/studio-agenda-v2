@@ -1,12 +1,14 @@
+import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
+import dayjs from "dayjs";
+
 import { Button } from "../components/Button";
 import { Avatar } from "../components/Avatar";
-import { useRequestFindOne } from "../hooks/useRequestFindOne";
-import { useEffect } from "react";
-import dayjs from "dayjs";
-import { SkeletonDetails } from "../components/Skeleton/Details";
-import { useRequestDestroy } from "../hooks/useRequestDestroy";
 import { Modal } from "../components/Modal";
+import { SkeletonDetails } from "../components/Skeleton/Details";
+import { useRequestFindOne } from "../hooks/useRequestFindOne";
+import { useRequestDestroy } from "../hooks/useRequestDestroy";
 import { useToggle } from "../hooks/useToggle";
 
 interface Schedule {
@@ -58,7 +60,11 @@ export function Details() {
     path: `/public/schedule/details/${scheduleId}`,
   });
 
-  const { execute: destroy, loading: loadingDestroy } = useRequestDestroy({
+  const {
+    execute: destroy,
+    loading: loadingDestroy,
+    error: errorCanceled,
+  } = useRequestDestroy({
     path: `/public/schedule/cancel/${scheduleId}`,
     callbackSuccess: () => {
       navigate(`/${accountId}`);
@@ -70,6 +76,14 @@ export function Details() {
       exeSchedule();
     }
   }, [scheduleId]);
+
+  useEffect(() => {
+    if (errorCanceled) {
+      toast.error(
+        "Você não pode cancenlar o agendamento 1h antes do horário. Entre em contato com o estabelecimento."
+      );
+    }
+  }, [errorCanceled]);
 
   const handleCancel = () => {
     destroy();
@@ -244,7 +258,7 @@ export function Details() {
         >
           <li>1. Caso não possa comparecer, cancele com antecedência.</li>
           <li>2. Chegue 10 minutos antes do horário agendado.</li>
-          <li>3. Você receberá um lemebrete pelo whatsapp 1h antes.</li>
+          <li>3. Você receberá um lembrete pelo whatsapp 1h antes.</li>
         </ul>
       </div>
 
