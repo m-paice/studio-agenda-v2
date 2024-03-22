@@ -74,6 +74,7 @@ export function UserInfo({
             placeholder="Digite seu telefone"
             value={values.cellPhone}
             name="cellPhone"
+            inputMode="numeric"
             onChange={(e) =>
               setFieldValue("cellPhone", maskTextCellPhone(e.target.value))
             }
